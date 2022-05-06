@@ -1,0 +1,11 @@
+.react-responsive-modal-modal {
+  padding: $main-padding;
+}
+
+.modal {
+  &-buttons {
+    button + button {
+      margin-left: 20px;
+    }
+  }
+}

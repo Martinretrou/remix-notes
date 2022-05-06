@@ -1,0 +1,77 @@
+body {
+  background-color: $background;
+  color: $white;
+  font-family: 'Helvetica', sans-serif;
+  margin: 0;
+}
+
+i {
+  font-size: 24px;
+}
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: $gray;
+  box-sizing: border-box;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: $gray;
+  border-radius: 10px;
+}
+
+.app-content {
+  display: grid;
+  grid-template-columns: 300px 5fr;
+}
+
+.logo {
+  font-size: 30px;
+  line-height: 28px;
+
+  mark {
+    background-color: transparent;
+    color: $accent;
+  }
+}
+
+fieldset {
+  border: 1px solid $gray;
+}
+
+button {
+  background-color: darken($accent, 5%);
+  border-radius: 3px;
+  color: $white;
+  border: none;
+  padding: 10px 30px 10px 30px;
+  font-weight: bold;
+  &:hover {
+    cursor: pointer;
+    background-color: $accent;
+  }
+  &.alt {
+    background-color: $background;
+    border: 1px solid $gray;
+  }
+}
+
+input {
+  height: 40px;
+  border-radius: 3px;
+  background-color: $background;
+  border: 1px solid $gray;
+  padding-left: $main-padding;
+  color: $white;
+}
