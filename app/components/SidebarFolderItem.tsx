@@ -96,7 +96,7 @@ const SidebarFolderItem = forwardRef(
             notes: [...folder?.notes, String(value?.[0]?.id)],
           });
           await fetchNotes(user?.id);
-          // await fetchFolders(user?.id);
+          await fetchFolders(user?.id);
         });
       } catch (err) {
         console.error(err);
@@ -170,7 +170,6 @@ const SidebarFolderItem = forwardRef(
           description="Deleting a folder means deleting the folder and the notes containd in the folder. The deletion is irreversible."
           onCancel={() => setShowDeleteModal(false)}
           onDelete={handleDeleteFolder}
-          setDisplayNoteModal(false);
         />
         <Toaster />
       </div>
