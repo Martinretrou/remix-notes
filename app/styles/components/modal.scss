@@ -3,9 +3,31 @@
 }
 
 .modal {
+  &-title {
+    text-transform: uppercase;
+    color: $light-gray;
+    font-size: 16px;
+  }
   &-buttons {
+    padding: $main-padding 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: $main-padding;
     button + button {
       margin-left: 20px;
+    }
+  }
+
+  &-form {
+    .input-container {
+      padding-right: 0;
+      padding-left: 0;
+    }
+    label {
+      text-transform: uppercase;
+      font-weight: bold;
+      color: $light-gray;
+      font-size: 12px;
     }
   }
 }

@@ -2,21 +2,21 @@ import React, { useState } from 'react';
 
 import { Modal } from 'react-responsive-modal';
 
-type AddNoteModalProps = {
+type DeleteModalProps = {
   open: boolean;
   title: string;
   description?: string;
-  onConfirm: () => void;
+  onDelete: () => void;
   onCancel: () => void;
 };
 
-const AddNoteModal = ({
+const DeleteModal = ({
   open,
   title,
   description,
   onCancel,
-  onConfirm,
-}: AddNoteModalProps) => {
+  onDelete,
+}: DeleteModalProps) => {
   return (
     <Modal open={open} onClose={onCancel} center>
       <h2 className="modal-title">{title}</h2>
@@ -25,10 +25,12 @@ const AddNoteModal = ({
         <button className="alt" onClick={onCancel}>
           Cancel
         </button>
-        <button onClick={onConfirm}>Confirm</button>
+        <button className="danger" onClick={onDelete}>
+          Confirm
+        </button>
       </div>
     </Modal>
   );
 };
 
-export default AddNoteModal;
+export default DeleteModal;

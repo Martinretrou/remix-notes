@@ -35,7 +35,8 @@
 }
 
 .react-responsive-modal-modal {
-  max-width: 800px;
+  max-width: 500px;
+  width: 500px;
   display: inline-block;
   text-align: left;
   vertical-align: middle;
@@ -58,6 +59,10 @@
   cursor: pointer;
   background-color: transparent;
   display: flex;
+
+  &:hover {
+    background-color: $gray;
+  }
 }
 
 @keyframes react-responsive-modal-overlay-in {

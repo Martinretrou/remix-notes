@@ -11,11 +11,13 @@
       font-size: 30px;
       font-weight: bold;
       outline: none;
+      color: lighten($light-gray, 30%);
     }
   }
 
   &-tool {
     height: calc(100% - 76px);
+    color: lighten($light-gray, 30%);
   }
 }
 
@@ -169,7 +171,7 @@
   outline: none;
   min-height: 0;
   background: $background;
-  color: $white;
+  color: lighten($light-gray, 30%);
   font-size: 14px;
   line-height: 1.7;
 }

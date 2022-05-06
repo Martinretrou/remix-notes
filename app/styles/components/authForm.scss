@@ -25,17 +25,4 @@
   &-buttons {
     padding: $main-padding;
   }
-
-  .input-container {
-    padding: $main-padding;
-    display: flex;
-    flex-direction: column;
-
-    input {
-      width: 350px;
-    }
-    label {
-      margin-bottom: 12px;
-    }
-  }
 }

@@ -1,4 +1,4 @@
-type IconProps = {
+export type IconProps = {
   iconName: string;
   type?: 'line' | 'fill';
   onClick?: () => void;

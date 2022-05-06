@@ -40,6 +40,16 @@ export const fetchNotes = async (userId: string) => {
   }
 };
 
+export const deleteNote = async (id: string) => {
+  const client = await getSupabaseClient();
+  try {
+    const { data, error } = await client.from('notes').delete().match({ id });
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 /********************/
 /* FOLDERS OF NOTES */
 /********************/
@@ -73,6 +83,16 @@ export const fetchFolders = async (userId: string) => {
       .from('folders')
       .select()
       .eq('user_id', userId);
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const deleteFolder = async (id: string) => {
+  const client = await getSupabaseClient();
+  try {
+    const { data, error } = await client.from('folders').delete().match({ id });
     return data;
   } catch (err) {
     console.error(err);

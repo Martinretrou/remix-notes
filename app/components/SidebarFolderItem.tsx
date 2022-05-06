@@ -4,19 +4,37 @@ import { resetServerContext } from 'react-beautiful-dnd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import map from 'lodash.map';
 import SidebarNoteItem from './SidebarNoteItem';
-import { useParams } from '@remix-run/react';
+import { useNavigate, useParams } from '@remix-run/react';
 import Icon from './Icon';
+import FolderActions from './FolderActions';
+import DeleteModal from './DeleteModal';
+import {
+  addNote,
+  deleteFolder,
+  fetchFolders,
+  fetchNotes,
+  updateFolder,
+} from '~/lib/notes';
+import toast, { Toaster } from 'react-hot-toast';
+import AddNoteModal from './AddNoteModal';
+import type { User } from '@supabase/supabase-js';
 
 export type SidebarFolderItemProps = {
   folder: INoteFolder;
   notes: INote[];
+  user?: User;
 };
 
 const SidebarFolderItem = forwardRef(
-  ({ notes, folder, ...props }: SidebarFolderItemProps, ref) => {
+  ({ notes, folder, user, ...props }: SidebarFolderItemProps, ref) => {
     const params = useParams();
+    let navigate = useNavigate();
+
     const [itemList, setItemList] = useState(notes);
     const [isOpened, setIsOpened] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [displayNoteModal, setDisplayNoteModal] = useState(false);
+
     resetServerContext();
 
     const handleDrop = (droppedItem: any) => {
@@ -32,12 +50,58 @@ const SidebarFolderItem = forwardRef(
     };
 
     const isActive = useMemo(() => {
-      return folder?.notes.includes(params?.id || '');
+      return folder?.notes?.includes(params?.id || '');
     }, [folder, params]);
 
     useEffect(() => {
       if (isActive) setIsOpened(true);
     }, [isActive]);
+
+    const handleDeleteFolder = async () => {
+      setShowDeleteModal(false);
+      const promise = deleteFolder(folder.id);
+      toast.promise(promise, {
+        loading: 'Deleting folder....',
+        success: (data) => {
+          return 'Successfully deleted the folder !';
+        },
+        error: 'Error deleting folder. Try again.',
+      });
+    };
+
+    const handleNewNote = async () => {
+      setDisplayNoteModal(false);
+      try {
+        const promise = addNote({
+          title: 'Untitled',
+          user_id: user?.id,
+        });
+
+        toast.promise(promise, {
+          loading: 'Creating note....',
+          success: (data) => {
+            navigate(`/notes/${data?.[0]?.id}/edit`);
+
+            return 'Successfully created a new note!';
+          },
+          error: 'Error creating note. Try again.',
+        });
+
+        const data = Promise.resolve(promise);
+
+        data.then(async (value) => {
+          console.log(value);
+          await updateFolder({
+            ...folder,
+            notes: [...folder?.notes, String(value?.[0]?.id)],
+          });
+          await fetchNotes(user?.id);
+          // await fetchFolders(user?.id);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
     return (
       <div
@@ -49,9 +113,16 @@ const SidebarFolderItem = forwardRef(
           className="sidebar-folder-item-header"
           onClick={() => setIsOpened(!isOpened)}
         >
-          {!isOpened && <Icon iconName="arrow-down-s" />}
-          {isOpened && <Icon iconName="arrow-up-s" />}
-          <p className="sidebar-folder-item-title">{folder.title}</p>
+          <div className="left">
+            {!isOpened && <Icon iconName="arrow-down-s" />}
+            {isOpened && <Icon iconName="arrow-up-s" />}
+            <p className="sidebar-folder-item-title">{folder.title}</p>
+          </div>
+          <FolderActions
+            onNewNote={() => setDisplayNoteModal(true)}
+            onDelete={() => setShowDeleteModal(true)}
+            onEdit={() => null}
+          />
         </div>
 
         {isOpened && (
@@ -87,6 +158,21 @@ const SidebarFolderItem = forwardRef(
             </Droppable>
           </DragDropContext>
         )}
+        <AddNoteModal
+          open={displayNoteModal}
+          onCancel={() => setDisplayNoteModal(false)}
+          onConfirm={handleNewNote}
+          title="Create new note in the folder"
+        />
+        <DeleteModal
+          open={showDeleteModal}
+          title="Confirm folder deletion"
+          description="Deleting a folder means deleting the folder and the notes containd in the folder. The deletion is irreversible."
+          onCancel={() => setShowDeleteModal(false)}
+          onDelete={handleDeleteFolder}
+          setDisplayNoteModal(false);
+        />
+        <Toaster />
       </div>
     );
   }

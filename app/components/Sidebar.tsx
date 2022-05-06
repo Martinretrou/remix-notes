@@ -62,7 +62,7 @@ const Sidebar = ({ notes, folders, user }: SidebarProps) => {
   };
 
   const getNotesByIds = (ids: string[]): INote[] => {
-    return notes.filter((note) => ids.includes(String(note.id)));
+    return notes.filter((note) => ids?.includes(String(note.id)));
   };
 
   const trailingNotes = useMemo(() => {
@@ -70,7 +70,7 @@ const Sidebar = ({ notes, folders, user }: SidebarProps) => {
       .map((folder) => folder.notes)
       .flat(Infinity);
 
-    return notes.filter((note) => !notesIdInFolders.includes(String(note.id)));
+    return notes.filter((note) => !notesIdInFolders?.includes(String(note.id)));
   }, [folders, notes]);
 
   useEffect(() => setTrailingNotesList(trailingNotes), [trailingNotes]);
@@ -105,8 +105,10 @@ const Sidebar = ({ notes, folders, user }: SidebarProps) => {
                   >
                     {(provided) => (
                       <SidebarFolderItem
+                        user={user}
                         notes={getNotesByIds(folder.notes)}
                         folder={folder}
+                        key={folder.id}
                         ref={provided.innerRef}
                         {...provided.dragHandleProps}
                         {...provided.draggableProps}

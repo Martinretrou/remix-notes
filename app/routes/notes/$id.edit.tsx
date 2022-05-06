@@ -1,7 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 
-import React, { useMemo, useState } from 'react';
-import type { LoaderFunction } from 'remix';
+import React, { useMemo } from 'react';
+import type { LoaderFunction, MetaFunction } from 'remix';
 import { redirect, useLoaderData, useTransition } from 'remix';
 import AppLayout from '~/components/AppLayout';
 import Editor from '~/components/Editor';
@@ -25,6 +25,13 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   const note = notes?.find((note) => String(note.id) === String(params.id));
 
   return { folders, user, notesError, error, note, notes };
+};
+
+export let meta: MetaFunction = () => {
+  return {
+    title: 'Edit note | Remix notes',
+    description: 'Edit note | Remix notes',
+  };
 };
 
 const NoteEdit = () => {

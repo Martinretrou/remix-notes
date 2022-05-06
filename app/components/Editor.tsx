@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useTransition } from 'remix';
 import MarkdownIt from 'markdown-it';
 
 import MdEditor from 'react-markdown-editor-lite';
@@ -18,8 +17,6 @@ const Editor = ({ note }: EditorProps) => {
   const [value, setValue] = useState(note?.content || '');
   const [title, setTitle] = useState(note?.title || '');
 
-  const transition = useTransition();
-
   const handleEditorChange = ({ html, text }) => {
     const newValue = text.replace(/\d/g, '');
     handleNoteUpdate();
@@ -28,14 +25,14 @@ const Editor = ({ note }: EditorProps) => {
 
   const handleNoteUpdate = async () => {
     try {
-      const data = await updateNote({ ...note, content: value });
+      await updateNote({ ...note, title, content: value });
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    setValue(note?.content);
+    setValue(note?.content || '');
     setTitle(note?.title);
   }, [note]);
 
