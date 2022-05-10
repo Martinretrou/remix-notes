@@ -20,6 +20,7 @@ const SidebarNoteItem = forwardRef(
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const handleDeleteNote = async () => {
+      setShowDeleteModal(false);
       const promise = deleteNote(id);
       toast.promise(promise, {
         loading: 'Deleting note....',
@@ -40,7 +41,6 @@ const SidebarNoteItem = forwardRef(
         to={`/notes/${id}/edit`}
       >
         <p className="sidebar-note-item-title">{title}</p>
-        <p className="sidebar-note-item-content">{content}</p>
         <NoteActions
           onDelete={() => setShowDeleteModal(true)}
           onEdit={() => null}

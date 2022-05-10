@@ -3,21 +3,44 @@
 
   &-header {
     height: 76px;
+    width: 100%;
     padding-top: $main-padding;
     border-bottom: 1px solid $gray;
+    display: flex;
+    justify-content: space-between;
 
     input {
+      width: 80%;
       border: 0;
       font-size: 30px;
       font-weight: bold;
       outline: none;
       color: lighten($light-gray, 30%);
     }
+
+    &-meta {
+      font-size: 12px;
+      color: $light-gray;
+      padding-right: 20px;
+    }
   }
 
   &-tool {
     height: calc(100% - 76px);
     color: lighten($light-gray, 30%);
+  }
+}
+
+.task-list-item {
+  align-items: center;
+
+  label {
+    display: flex;
+    align-items: center;
+
+    input {
+      margin-right: 12px;
+    }
   }
 }
 
@@ -219,6 +242,7 @@
   font-size: 14px;
   line-height: 1.7;
   margin: 8px 0;
+  color: lighten($light-gray, 30%);
 }
 .custom-html-style a {
   color: $accent;

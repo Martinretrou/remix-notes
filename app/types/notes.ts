@@ -4,6 +4,7 @@ export interface INote {
   content?: string;
   user_id: string;
   created_at?: string;
+  updated_at?: string;
   cover?: string;
 }
 
@@ -13,5 +14,6 @@ export interface INoteFolder {
   title: string;
   description?: string;
   created_at?: string;
+  updated_at?: string;
   user_id: string;
 }

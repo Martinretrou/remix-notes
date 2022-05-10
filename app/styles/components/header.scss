@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 $main-padding 0 $main-padding;
+  padding: 0 $main-padding 0 0;
 
   &-actions {
     display: flex;
@@ -13,7 +13,9 @@
   }
 
   &-action {
-    padding: 0 5px;
+    height: 50px;
+    padding: 0 20px;
+    border-right: 1px solid $gray;
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -28,7 +30,6 @@
     }
     &:hover {
       background-color: lighten($background, 2%);
-      border-radius: 5px;
 
       p,
       i {
@@ -36,9 +37,14 @@
       }
     }
 
-    & + & {
-      margin-left: 15px;
-    }
+    // & + & {
+    //   margin-left: 15px;
+    // }
+  }
+
+  .action-button {
+    padding: 0;
+    background-color: transparent;
   }
 
   &-meta {

@@ -1,5 +1,5 @@
 .sidebar {
-  width: 300px;
+  width: 250px;
   height: 100vh;
   overflow-y: scroll;
   border-right: 1px solid $gray;
@@ -7,7 +7,7 @@
   &-header {
     position: sticky;
     background-color: $background;
-    padding: $main-padding;
+    padding: calc($main-padding / 2);
     border-bottom: 1px solid $gray;
     top: 0;
     left: 0;
@@ -38,7 +38,7 @@
       align-items: center;
       justify-content: space-between;
       border-left: 2px solid transparent;
-      padding: $main-padding;
+      padding: $main-padding / 2;
       border-bottom: 1px solid $gray;
       cursor: pointer;
       color: lighten($light-gray, 12.5%);
@@ -100,70 +100,60 @@
     }
   }
 
-  .note-actions {
-    position: absolute;
-    right: $main-padding;
-    top: $main-padding;
-  }
-
   &-note-item {
     position: relative;
-    padding: $main-padding $main-padding $main-padding calc($main-padding - 2px);
-    height: 100px;
+    padding: 4px 20px 4px 4px;
     background-color: $background;
     text-decoration: none;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid $gray;
-    border-left: 2px solid $background;
-    &.in-folder {
-      margin-left: 40px;
-      border-left: 2px solid $gray;
-      padding: $main-padding $main-padding $main-padding
-        calc($main-padding * 2 - 2px);
+    margin-left: 20px;
+    border-left: 2px solid $gray;
+    padding: 4px 9px 4px 10px;
 
-      &:before {
-        content: ' ';
-        position: absolute;
-        width: 22px;
-        height: 1px;
-        background: $gray;
-        left: -24px;
-        top: calc(50% - 1px);
-      }
+    &:before {
+      content: ' ';
+      position: absolute;
+      width: 10px;
+      height: 1px;
+      background: $gray;
+      left: -10px;
+      top: calc(50% - 1px);
+    }
 
+    &:after {
+      content: ' ';
+      position: absolute;
+      width: 1px;
+      height: 19px;
+      background: $gray;
+      left: -10px;
+      top: -1px;
+    }
+
+    &:not(:first-child) {
       &:after {
-        content: ' ';
-        position: absolute;
-        width: 1px;
-        height: 50px;
-        background: $gray;
-        left: -24px;
-        top: -1px;
-      }
-
-      &:not(:first-child) {
-        &:after {
-          height: 100%;
-          top: -50%;
-        }
+        height: 100%;
+        top: -50%;
       }
     }
     &.active {
-      border-left: 2px solid $accent;
+      background-color: $gray;
     }
     &:hover {
-      border-left: 2px solid $accent;
-      background-color: lighten($background, 2%);
+      background-color: $gray;
       .action-button {
         opacity: 1;
       }
     }
     &-title {
-      font-size: 14px;
+      font-size: 13px;
       color: lighten($light-gray, 25%);
       font-weight: bold;
       margin: 0;
+      border-radius: 3px;
     }
     &-content {
       font-size: 12px;

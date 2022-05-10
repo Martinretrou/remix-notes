@@ -1,4 +1,4 @@
-import type { ActionFunction, MetaFunction } from 'remix';
+import type { ActionFunction, LoaderFunction, MetaFunction } from 'remix';
 import type { Session, User } from '@supabase/supabase-js';
 import { useActionData, redirect, json } from 'remix';
 import type { AuthCreds } from '../../components/AuthForm';

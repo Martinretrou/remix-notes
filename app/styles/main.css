@@ -8,6 +8,7 @@
 *
 * Date: 2020-05-23
 */
+@import url("https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,400&display=swap");
 @font-face {
   font-family: "remixicon";
   src: url("/fonts/icons/remixicon.eot?t=1590207869815");
@@ -9282,12 +9283,16 @@
 body {
   background-color: #1c1c1c;
   color: #eeeeee;
-  font-family: "Helvetica", sans-serif;
+  font-family: "Mulish", sans-serif;
   margin: 0;
 }
 
 i {
   font-size: 24px;
+}
+
+.blur {
+  filter: blur(10px);
 }
 
 /* ===== Scrollbar CSS ===== */
@@ -9314,7 +9319,7 @@ i {
 
 .app-content {
   display: grid;
-  grid-template-columns: 300px 5fr;
+  grid-template-columns: 250px 5fr;
 }
 
 .input-container {
@@ -9368,13 +9373,61 @@ button.danger:hover {
   background-color: #d22727;
 }
 
-input {
+input[type=text],
+input[type=email],
+input[type=password] {
   height: 40px;
   border-radius: 3px;
   background-color: #1c1c1c;
   border: 1px solid #282828;
   padding-left: 18px;
   color: #eeeeee;
+}
+
+input[type=checkbox] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  /* Remove most all native input styles */
+  appearance: none;
+  /* For iOS < 15 */
+  background-color: #1c1c1c;
+  /* Not removed via appearance */
+  margin: 0;
+  font: inherit;
+  color: #6dcb93;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid #6dcb93;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+  display: grid;
+  place-content: center;
+}
+
+input[type=checkbox]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  transform-origin: bottom left;
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em #6dcb93;
+  background-color: CanvasText;
+}
+
+input[type=checkbox]:checked::before {
+  transform: scale(1);
+}
+
+input[type=checkbox]:focus {
+  outline: max(2px, 0.15em) solid #6dcb93;
+  outline-offset: max(2px, 0.15em);
+}
+
+input[type=checkbox]:disabled {
+  color: #282828;
+  cursor: not-allowed;
 }
 
 .action-button {
@@ -9411,7 +9464,7 @@ input {
 }
 
 .sidebar {
-  width: 300px;
+  width: 250px;
   height: 100vh;
   overflow-y: scroll;
   border-right: 1px solid #282828;
@@ -9419,7 +9472,7 @@ input {
 .sidebar-header {
   position: sticky;
   background-color: #1c1c1c;
-  padding: 18px;
+  padding: 9px;
   border-bottom: 1px solid #282828;
   top: 0;
   left: 0;
@@ -9448,7 +9501,7 @@ input {
   align-items: center;
   justify-content: space-between;
   border-left: 2px solid transparent;
-  padding: 18px;
+  padding: 9px;
   border-bottom: 1px solid #282828;
   cursor: pointer;
   color: #909090;
@@ -9497,64 +9550,56 @@ input {
   background-color: #282828;
   border: 1px solid #eeeeee;
 }
-.sidebar .note-actions {
-  position: absolute;
-  right: 18px;
-  top: 18px;
-}
 .sidebar-note-item {
   position: relative;
-  padding: 18px 18px 18px 16px;
-  height: 100px;
+  padding: 4px 20px 4px 4px;
   background-color: #1c1c1c;
   text-decoration: none;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #282828;
-  border-left: 2px solid #1c1c1c;
-}
-.sidebar-note-item.in-folder {
-  margin-left: 40px;
+  margin-left: 20px;
   border-left: 2px solid #282828;
-  padding: 18px 18px 18px 34px;
+  padding: 4px 9px 4px 10px;
 }
-.sidebar-note-item.in-folder:before {
+.sidebar-note-item:before {
   content: " ";
   position: absolute;
-  width: 22px;
+  width: 10px;
   height: 1px;
   background: #282828;
-  left: -24px;
+  left: -10px;
   top: calc(50% - 1px);
 }
-.sidebar-note-item.in-folder:after {
+.sidebar-note-item:after {
   content: " ";
   position: absolute;
   width: 1px;
-  height: 50px;
+  height: 19px;
   background: #282828;
-  left: -24px;
+  left: -10px;
   top: -1px;
 }
-.sidebar-note-item.in-folder:not(:first-child):after {
+.sidebar-note-item:not(:first-child):after {
   height: 100%;
   top: -50%;
 }
 .sidebar-note-item.active {
-  border-left: 2px solid #6dcb93;
+  background-color: #282828;
 }
 .sidebar-note-item:hover {
-  border-left: 2px solid #6dcb93;
-  background-color: #212121;
+  background-color: #282828;
 }
 .sidebar-note-item:hover .action-button {
   opacity: 1;
 }
 .sidebar-note-item-title {
-  font-size: 14px;
+  font-size: 13px;
   color: #b0b0b0;
   font-weight: bold;
   margin: 0;
+  border-radius: 3px;
 }
 .sidebar-note-item-content {
   font-size: 12px;
@@ -9576,14 +9621,16 @@ input {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px 0 18px;
+  padding: 0 18px 0 0;
 }
 .header-actions {
   display: flex;
   align-items: center;
 }
 .header-action {
-  padding: 0 5px;
+  height: 50px;
+  padding: 0 20px;
+  border-right: 1px solid #282828;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -9598,14 +9645,14 @@ input {
 }
 .header-action:hover {
   background-color: #212121;
-  border-radius: 5px;
 }
 .header-action:hover p,
 .header-action:hover i {
   opacity: 1;
 }
-.header-action + .header-action {
-  margin-left: 15px;
+.header .action-button {
+  padding: 0;
+  background-color: transparent;
 }
 .header-meta {
   display: flex;
@@ -9627,19 +9674,39 @@ input {
 }
 .editor-header {
   height: 76px;
+  width: 100%;
   padding-top: 18px;
   border-bottom: 1px solid #282828;
+  display: flex;
+  justify-content: space-between;
 }
 .editor-header input {
+  width: 80%;
   border: 0;
   font-size: 30px;
   font-weight: bold;
   outline: none;
   color: #bdbdbd;
 }
+.editor-header-meta {
+  font-size: 12px;
+  color: #707070;
+  padding-right: 20px;
+}
 .editor-tool {
   height: calc(100% - 76px);
   color: #bdbdbd;
+}
+
+.task-list-item {
+  align-items: center;
+}
+.task-list-item label {
+  display: flex;
+  align-items: center;
+}
+.task-list-item label input {
+  margin-right: 12px;
 }
 
 .html-wrap {
@@ -9879,6 +9946,7 @@ input {
   font-size: 14px;
   line-height: 1.7;
   margin: 8px 0;
+  color: #bdbdbd;
 }
 
 .custom-html-style a {
@@ -10292,6 +10360,15 @@ input {
   font-weight: bold;
   color: #707070;
   font-size: 12px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Mulish", sans-serif;
 }
 
 @font-face {

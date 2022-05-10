@@ -1,45 +1,65 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MarkdownIt from 'markdown-it';
 
 import MdEditor from 'react-markdown-editor-lite';
-import { updateNote } from '~/lib/notes';
 import type { INote } from '~/types/notes';
-import debounce from 'lodash.debounce';
+import { decryptNote } from '~/lib/crypto';
+import markdownItAnchor from 'markdown-it-anchor';
+
+var taskLists = require('markdown-it-task-lists');
+var linkify = require('linkify-it')();
+var externalLinks = require('markdown-it-external-links');
+
+linkify.set({ fuzzyEmail: false });
 
 type EditorProps = {
   note: INote;
+  onNoteChange: (note: INote) => void;
 };
 
-const mdParser = new MarkdownIt(/* Markdown-it options */);
+const mdParser = MarkdownIt({
+  linkify: true,
+})
+  .use(taskLists, { label: true })
+  .use(markdownItAnchor, {
+    permalink: true,
+    permalinkBefore: true,
+    permalinkSymbol: '', // §
+  })
+  .use(externalLinks);
 
-const Editor = ({ note }: EditorProps) => {
+const Editor = ({ note, onNoteChange }: EditorProps) => {
   const ref = useRef(null);
   const [value, setValue] = useState(note?.content || '');
   const [title, setTitle] = useState(note?.title || '');
 
-  const handleEditorChange = ({ html, text }) => {
+  const handleEditorChange = async ({ html, text }) => {
     const newValue = text.replace(/\d/g, '');
-    handleNoteUpdate();
-    setValue(newValue);
+    onNoteChange({ ...note, title, content: newValue });
+    setValue(text);
   };
 
-  const handleNoteUpdate = async () => {
-    try {
-      await updateNote({ ...note, title, content: value });
-    } catch (err) {
-      console.error(err);
-    }
+  const handleTitleChange = async (title: string) => {
+    const newValue = title.replace(/\d/g, '');
+    onNoteChange({ ...note, title: newValue, content: value });
+    setTitle(newValue);
   };
 
   useEffect(() => {
-    setValue(note?.content || '');
-    setTitle(note?.title);
+    const nextNote = decryptNote(note, passphrase);
+    setTitle(nextNote?.title);
+    setValue(nextNote?.content || '');
   }, [note]);
 
-  const debouncedChangeHandler = useCallback(
-    debounce(handleEditorChange, 300),
-    []
-  );
+  function onImageUpload(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (data) => {
+        resolve(data.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   return (
     <div className="editor">
@@ -48,8 +68,11 @@ const Editor = ({ note }: EditorProps) => {
           type="text"
           placeholder="Give your note a title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => handleTitleChange(e.target.value)}
         />
+        <div className="editor-header-meta">
+          <p>last updated: {note?.updated_at}</p>
+        </div>
       </div>
       <div className="editor-tool">
         <MdEditor
@@ -57,7 +80,8 @@ const Editor = ({ note }: EditorProps) => {
           defaultValue={value || ''}
           value={value || ''}
           renderHTML={(text) => mdParser.render(text)}
-          onChange={debouncedChangeHandler}
+          onChange={handleEditorChange}
+          onImageUpload={onImageUpload}
         />
       </div>
     </div>

@@ -9,7 +9,7 @@ import map from 'lodash.map';
 import { useOnClickOutside } from '~/hooks';
 
 type DropdownItem = {
-  label: string;
+  label?: string;
   type?: 'edit' | 'move-to-folder' | 'delete';
   url?: string;
   onClick?: () => void;
@@ -18,8 +18,8 @@ type DropdownItem = {
 type ActionButtonProps = {
   children?: ReactNode;
   dropdownItems?: DropdownItem[];
-  iconPosition: 'left' | 'right';
-} & IconProps;
+  iconPosition?: 'left' | 'right';
+} & Partial<IconProps>;
 
 const ActionButton = ({
   children,

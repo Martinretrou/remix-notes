@@ -23,7 +23,7 @@ function AuthForm({
     <div className="auth-page">
       <div className="auth-page-logo">
         <h1 className="logo">
-          Remix <mark>notes</mark>
+          Nabu <mark>notes</mark>
         </h1>
       </div>
       <Form className="auth-form" method="post">

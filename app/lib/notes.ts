@@ -1,5 +1,8 @@
 import type { INote, INoteFolder } from '~/types/notes';
+import { encryptFolder, encryptNote } from './crypto';
 import { getSupabaseClient } from './supabase';
+
+const passphrase = 'lorem-ipsum-dolor-sit-amet';
 
 /*********/
 /* NOTES */
@@ -8,7 +11,9 @@ import { getSupabaseClient } from './supabase';
 export const addNote = async (note: INote) => {
   const client = await getSupabaseClient();
   try {
-    const { data, error } = await client.from('notes').insert([note]);
+    const { data, error } = await client
+      .from('notes')
+      .insert([encryptNote(note, passphrase)]);
     return data;
   } catch (err) {
     console.error(err);
@@ -20,7 +25,17 @@ export const updateNote = async (note: INote) => {
   try {
     const { data, error } = await client
       .from('notes')
-      .insert([note], { upsert: true });
+      .insert(
+        [
+          encryptNote(
+            { ...note, updated_at: new Date().toISOString() },
+            passphrase
+          ),
+        ],
+        {
+          upsert: true,
+        }
+      );
     return data;
   } catch (err) {
     console.error(err);
@@ -57,7 +72,9 @@ export const deleteNote = async (id: string) => {
 export const addFolder = async (folder: INoteFolder) => {
   const client = await getSupabaseClient();
   try {
-    const { data, error } = await client.from('folders').insert([folder]);
+    const { data, error } = await client
+      .from('folders')
+      .insert([encryptFolder(folder, passphrase)]);
     return data;
   } catch (err) {
     console.error(err);
@@ -69,7 +86,17 @@ export const updateFolder = async (folder: INoteFolder) => {
   try {
     const { data, error } = await client
       .from('folders')
-      .insert([folder], { upsert: true });
+      .insert(
+        [
+          encryptFolder(
+            { ...folder, updated_at: new Date().toISOString() },
+            passphrase
+          ),
+        ],
+        {
+          upsert: true,
+        }
+      );
     return data;
   } catch (err) {
     console.error(err);

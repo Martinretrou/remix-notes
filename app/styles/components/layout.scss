@@ -1,12 +1,16 @@
 body {
   background-color: $background;
   color: $white;
-  font-family: 'Helvetica', sans-serif;
+  font-family: 'Mulish', sans-serif;
   margin: 0;
 }
 
 i {
   font-size: 24px;
+}
+
+.blur {
+  filter: blur(10px);
 }
 
 /* ===== Scrollbar CSS ===== */
@@ -33,7 +37,7 @@ i {
 
 .app-content {
   display: grid;
-  grid-template-columns: 300px 5fr;
+  grid-template-columns: 250px 5fr;
 }
 
 .input-container {
@@ -89,13 +93,63 @@ button {
   }
 }
 
-input {
+input[type='text'],
+input[type='email'],
+input[type='password'] {
   height: 40px;
   border-radius: 3px;
   background-color: $background;
   border: 1px solid $gray;
   padding-left: $main-padding;
   color: $white;
+}
+
+input[type='checkbox'] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  /* Remove most all native input styles */
+  appearance: none;
+  /* For iOS < 15 */
+  background-color: $background;
+  /* Not removed via appearance */
+  margin: 0;
+
+  font: inherit;
+  color: $accent;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid $accent;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+
+  display: grid;
+  place-content: center;
+}
+
+input[type='checkbox']::before {
+  content: '';
+  width: 0.65em;
+  height: 0.65em;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  transform-origin: bottom left;
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em $accent;
+  background-color: CanvasText;
+}
+
+input[type='checkbox']:checked::before {
+  transform: scale(1);
+}
+
+input[type='checkbox']:focus {
+  outline: max(2px, 0.15em) solid $accent;
+  outline-offset: max(2px, 0.15em);
+}
+
+input[type='checkbox']:disabled {
+  color: $gray;
+  cursor: not-allowed;
 }
 
 .action-button {

@@ -1,13 +1,15 @@
 import type { PropsWithChildren, ReactElement } from 'react';
 import { useState } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { useTransition, useNavigate } from 'remix';
+import { useTransition, useNavigate, redirect } from 'remix';
 import { addFolder, addNote, fetchFolders, fetchNotes } from '~/lib/notes';
 import Icon from './Icon';
 import AddNoteModal from './AddNoteModal';
 import toast, { Toaster } from 'react-hot-toast';
 import AddFolderModal from './AddFolderModal';
 import type { INoteFolder } from '~/types/notes';
+import ActionButton from './ActionButton';
+import { getSupabaseClient } from '~/lib/supabase';
 
 type HeaderProps = {
   user?: User;
@@ -66,6 +68,23 @@ function Header({ user }: PropsWithChildren<HeaderProps>): ReactElement {
     }
   };
 
+  const handleLogout = async () => {
+    const client = await getSupabaseClient();
+    try {
+      const promise = client.auth.signOut();
+      toast.promise(promise, {
+        loading: 'Logging out....',
+        success: (data) => {
+          navigate(`/auth`);
+          return 'Successfully logged out!';
+        },
+        error: 'Error logging out. Try again.',
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <nav className="header">
       <div className="header-actions">
@@ -84,10 +103,20 @@ function Header({ user }: PropsWithChildren<HeaderProps>): ReactElement {
           <p>New folder</p>
         </div>
       </div>
-      <div className="header-meta">
-        <p>{user?.email}</p>
-        <div className="header-avatar" />
-      </div>
+      <ActionButton
+        dropdownItems={[
+          {
+            label: 'Log out',
+            onClick: handleLogout,
+          },
+        ]}
+      >
+        <div className="header-meta">
+          <p>{user?.email}</p>
+          <div className="header-avatar" />
+        </div>
+      </ActionButton>
+
       <AddNoteModal
         open={displayNoteModal}
         onCancel={() => setDisplayNoteModal(false)}

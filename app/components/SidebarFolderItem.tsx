@@ -18,6 +18,7 @@ import {
 import toast, { Toaster } from 'react-hot-toast';
 import AddNoteModal from './AddNoteModal';
 import type { User } from '@supabase/supabase-js';
+import EditFolderModal from './EditFolderModal';
 
 export type SidebarFolderItemProps = {
   folder: INoteFolder;
@@ -33,19 +34,20 @@ const SidebarFolderItem = forwardRef(
     const [itemList, setItemList] = useState(notes);
     const [isOpened, setIsOpened] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [displayNoteModal, setDisplayNoteModal] = useState(false);
 
     resetServerContext();
 
+    useEffect(() => {
+      setItemList(notes);
+    }, [notes]);
+
     const handleDrop = (droppedItem: any) => {
-      // Ignore drop outside droppable container
       if (!droppedItem.destination) return;
       var updatedList = [...itemList];
-      // Remove dragged item
       const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
-      // Add dropped item
       updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
-      // Update State
       setItemList(updatedList);
     };
 
@@ -69,35 +71,39 @@ const SidebarFolderItem = forwardRef(
       });
     };
 
+    const handleEditFolder = async (folder: INoteFolder) => {
+      setShowEditModal(false);
+      const promise = updateFolder(folder);
+      toast.promise(promise, {
+        loading: 'Updating folder....',
+        success: (data) => {
+          return 'Successfully updated the folder !';
+        },
+        error: 'Error updating folder. Try again.',
+      });
+    };
+
     const handleNewNote = async () => {
       setDisplayNoteModal(false);
       try {
-        const promise = addNote({
+        const addedNote = await addNote({
           title: 'Untitled',
           user_id: user?.id,
         });
 
-        toast.promise(promise, {
-          loading: 'Creating note....',
-          success: (data) => {
-            navigate(`/notes/${data?.[0]?.id}/edit`);
+        const nextNotes = [];
+        if (folder.notes) {
+          nextNotes.push(...folder.notes);
+        }
+        nextNotes.push(String(addedNote?.[0]?.id));
 
-            return 'Successfully created a new note!';
-          },
-          error: 'Error creating note. Try again.',
+        await updateFolder({
+          ...folder,
+          notes: nextNotes,
         });
-
-        const data = Promise.resolve(promise);
-
-        data.then(async (value) => {
-          console.log(value);
-          await updateFolder({
-            ...folder,
-            notes: [...folder?.notes, String(value?.[0]?.id)],
-          });
-          await fetchNotes(user?.id);
-          await fetchFolders(user?.id);
-        });
+        await fetchNotes(user?.id);
+        await fetchFolders(user?.id);
+        navigate(`/notes/${addedNote?.[0]?.id}/edit`);
       } catch (err) {
         console.error(err);
       }
@@ -119,9 +125,9 @@ const SidebarFolderItem = forwardRef(
             <p className="sidebar-folder-item-title">{folder.title}</p>
           </div>
           <FolderActions
-            onNewNote={() => setDisplayNoteModal(true)}
+            onNewNote={handleNewNote}
             onDelete={() => setShowDeleteModal(true)}
-            onEdit={() => null}
+            onEdit={() => setShowEditModal(true)}
           />
         </div>
 
@@ -171,6 +177,14 @@ const SidebarFolderItem = forwardRef(
           onCancel={() => setShowDeleteModal(false)}
           onDelete={handleDeleteFolder}
         />
+        <EditFolderModal
+          open={showEditModal}
+          folder={folder}
+          title="Edit folder"
+          onCancel={() => setShowEditModal(false)}
+          onConfirm={handleEditFolder}
+        />
+
         <Toaster />
       </div>
     );

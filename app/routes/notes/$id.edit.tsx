@@ -1,13 +1,20 @@
 import type { User } from '@supabase/supabase-js';
+import debounce from 'lodash.debounce';
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import type { LoaderFunction, MetaFunction } from 'remix';
-import { redirect, useLoaderData, useTransition } from 'remix';
+import { useFetcher } from 'remix';
+import { useLocation } from 'remix';
+import { redirect, useLoaderData } from 'remix';
 import AppLayout from '~/components/AppLayout';
 import Editor from '~/components/Editor';
 import { isAuthenticated, getUserByRequestToken } from '~/lib/auth';
+import { decryptNote, encryptNote } from '~/lib/crypto';
+import { updateNote } from '~/lib/notes';
 import { supabase } from '~/lib/supabase/supabase.server';
 import type { INote, INoteFolder } from '~/types/notes';
+
+const passphrase = 'lorem-ipsum-dolor-sit-amet';
 
 export let loader: LoaderFunction = async ({ request, params }) => {
   if (!(await isAuthenticated(request))) return redirect('/auth');
@@ -42,13 +49,45 @@ const NoteEdit = () => {
     user?: User;
   }>();
 
-  const transition = useTransition();
+  const fetcher = useFetcher();
+
+  let location = useLocation();
 
   const currentNote = useMemo(() => note, [note]);
 
+  const handleNoteChange = async (note: INote) => {
+    try {
+      await updateNote(note);
+      const encrypted = encryptNote(note, passphrase);
+      const decrypted = decryptNote(encrypted, passphrase);
+      fetcher.load(location.pathname);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const debouncedNoteUpdate = useCallback(debounce(handleNoteChange, 1000), []);
+
+  useEffect(() => {
+    debouncedNoteUpdate.cancel();
+    () => {
+      return debouncedNoteUpdate.cancel();
+    };
+  }, [location.key]);
+
+  useEffect(() => {
+    () => {
+      return debouncedNoteUpdate.cancel();
+    };
+  }, []);
+
+  console.log({ note });
+
   return (
     <AppLayout user={user} folders={folders} notes={notes}>
-      {currentNote && <Editor note={currentNote} />}
+      {currentNote && (
+        <Editor onNoteChange={debouncedNoteUpdate} note={currentNote} />
+      )}
     </AppLayout>
   );
 };
